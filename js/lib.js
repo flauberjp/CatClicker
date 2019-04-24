@@ -1,121 +1,182 @@
-class Cat {
-    constructor(nome, cliques = 0, selecionado = false) {
-        this.nome = nome;
-        this.cliques = cliques;
-        this.url = 'img/cats/' + this.nome + '.jpg'; 
-        this.selecionado = selecionado;
-    }
-}
-
-$(function(){
+$(function() {
+    // ========= MODEL ============
     var model = {
+        adminModeActivated: false,
+        selectedCat: null,
+        cats: [
+            {
+                name: 'jetske',
+                cliques: 0,
+                url: 'img/cats/jetske.jpg' 
+            },
+            {
+                name: 'bicolour',
+                cliques: 0,
+                url: 'img/cats/bicolour.jpg' 
+            },
+            {
+                name: 'chewie',
+                cliques: 0,
+                url: 'img/cats/chewie.jpg' 
+            },
+            {
+                name: 'iceandfire',
+                cliques: 0,
+                url: 'img/cats/iceandfire.jpg' 
+            },
+            {
+                name: 'poplinre',
+                cliques: 0,
+                url: 'img/cats/poplinre.jpg' 
+            },
+        ],
         init: function() {
-            if (!localStorage.cats) {
-                cats = [];
-                var catsNames = ['jetske', 'bicolour', 'chewie', 'iceandfire', 'poplinre'];
-                catsNames.sort();
-                for (var i = 0; i < catsNames.length; i++) {
-                    var cat = new Cat(catsNames[i]);
-                    cats.push(cat);
-                }
-                localStorage.cats = JSON.stringify(cats);
-            }
-        },
-        getAllCats: function() {
-            return JSON.parse(localStorage.cats);
+            this.selectedCat = model.cats[0];
         }
     };
 
 
+    // ========= OCTOPUS ============
     var octopus = {
         incClique: function(cat) {
-            var cats = model.getAllCats();
-            for (var i = 0; i < cats.length; i++) {
-                if (cats[i].nome == cat.nome) {
-                    cats[i].cliques += 1;
-                    break;
-                }
-            };
-            localStorage.cats = JSON.stringify(cats);
+            model.selectedCat.cliques += 1;
             viewGatoSelecionado.render();
         },
 
         getAllCats: function() {
-            var cats = model.getAllCats();
-            return cats;
+            return model.cats;
         },
 
         getSelectedCat: function() {
-            var result = null;
-            var cats = model.getAllCats();
-            for (var i = 0; i < cats.length; i++) {
-                if (cats[i].selecionado) {
-                    result = cats[i];
-                    break;
-                }
-            };
-            return result;
+            return model.selectedCat;
         },
 
         setSelectedCat: function(cat) {
-            var cats = model.getAllCats();
-            for (var i = 0; i < cats.length; i++) {
-                cats[i].selecionado = cats[i].nome == cat.nome;
-            };
-            localStorage.cats = JSON.stringify(cats);
+            model.selectedCat = cat;
         },
 
-        AtualizaViewGatoSelecionado: function() {
-            viewGatoSelecionado.init();
+        atualizaViewGatoSelecionado: function() {
+            viewGatoSelecionado.render();
+            octopus.atualizaViewAdminArea();
         },
 
+        editar: function() {
+            viewAdminArea.adminArea_nome.value = model.selectedCat.name;
+            viewAdminArea.adminArea_cliques.value = model.selectedCat.cliques;
+            viewAdminArea.adminArea_url.value = model.selectedCat.url;
+            viewAdminArea.show();
+        },
+
+        cancelar: function() {
+            viewAdminArea.hide();
+        },
+        salvar: function() {
+            model.selectedCat.name = viewAdminArea.adminArea_nome.value;
+            model.selectedCat.cliques = Number(viewAdminArea.adminArea_cliques.value);
+            model.selectedCat.url = viewAdminArea.adminArea_url.value;
+            viewAdminArea.hide();
+            viewCatList.render();
+            viewGatoSelecionado.render();
+        },
+        atualizaViewAdminArea: function() {
+            viewAdminArea.adminArea_nome.setAttribute("value", model.selectedCat.name);
+            viewAdminArea.adminArea_cliques.setAttribute("value", model.selectedCat.cliques);
+            viewAdminArea.adminArea_url.setAttribute("value", model.selectedCat.url);
+        },
         init: function() {
             model.init();
-            view.init();
+            viewCatList.init();
+            viewGatoSelecionado.init();
+            viewAdminArea.init();
+            viewAdminArea.hide();
+            viewCatList.render();
+            viewGatoSelecionado.render();
+
+            octopus.atualizaViewAdminArea();
         }
+
     };
 
-
-    var view = {
+    // ========= VIEWS ============
+    var viewCatList = {
         init: function() {
-            this.catList = $('#catsList');
-            view.render();
+            this.catList = document.getElementById('catsList');
+            this.editarLink = document.getElementById('editarLink');
+            editarLink.addEventListener('click', function() {
+                   return octopus.editar();
+            });
         },
-        render: function(){
+        render: function() {
+            
+            while (this.catList.hasChildNodes()) {
+                this.catList.removeChild(this.catList.lastChild);
+            }
+
             octopus.getAllCats().forEach(function(cat){
                 var elem = document.createElement('li');
                 var catNameLink = document.createElement('a');
-                catNameLink.innerText = cat.nome;
+                catNameLink.innerText = cat.name;
                 elem.appendChild(catNameLink);
 
                 catNameLink.addEventListener('click', (function(catCopy) {
                     return function() {
+                        octopus.cancelar();
                         octopus.setSelectedCat(catCopy);
-                        octopus.AtualizaViewGatoSelecionado();
+                        octopus.atualizaViewGatoSelecionado();
                     }
                 })(cat));
 
-                document.getElementById('catsList').appendChild(elem);
+                viewCatList.catList.appendChild(elem);
             });
         }
     };
 
     var viewGatoSelecionado = {
         init: function() {
-            viewGatoSelecionado.render();
+            this.catHome = document.getElementById("cat-name");
+            this.catCliques = document.getElementById("cat-cliques")
+            this.catFoto = document.getElementById("cat-foto");
         },
         render: function(){
             this.selectedCat = octopus.getSelectedCat();
-            document.getElementById("cat-nome").innerText = this.selectedCat.nome;
-            document.getElementById("cat-cliques").innerText = this.selectedCat.cliques;
-            var foto = document.getElementById("cat-foto");
-            foto.setAttribute("src", this.selectedCat.url);
-            foto.onclick = (function(catCopyOfTheCopy) {
+            viewGatoSelecionado.catHome.innerText = this.selectedCat.name;
+            viewGatoSelecionado.catCliques.innerText = this.selectedCat.cliques;
+            viewGatoSelecionado.catFoto.setAttribute("src", this.selectedCat.url);
+            viewGatoSelecionado.catFoto.onclick = (function(catCopyOfTheCopy) {
                 return function() {
                     octopus.incClique(catCopyOfTheCopy);
 
                 }
             })(this.selectedCat);
+        }
+    };
+
+    var viewAdminArea = {
+        init: function() {
+            this.adminArea = document.getElementById("adminArea");
+            this.ocultarButton = document.getElementById('ocultarButton');
+            ocultarButton.addEventListener('click', function() {
+                   octopus.cancelar();
+            });
+
+            this.adminArea_nome = document.getElementById("adminArea_nome");
+            this.adminArea_cliques = document.getElementById("adminArea_cliques");
+            this.adminArea_url = document.getElementById("adminArea_url");
+
+            document.getElementById('form').addEventListener('submit', function(evt){
+                evt.preventDefault();
+                octopus.salvar();
+                octopus.cancelar();
+            })
+
+        },
+        show: function() {
+            this.adminArea.style.visibility = "visible";
+        },
+        hide: function() {
+            this.adminArea.style.visibility = "hidden";
+        },
+        render: function(){
         }
     };
 

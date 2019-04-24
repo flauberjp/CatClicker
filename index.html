@@ -1,37 +1,96 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
 
-  <meta charset="utf-8">
-  <title>Cat Clicker</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Cat Clicker</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <div>
-        <strong>Gatos disponíveis:</strong>
-        <ul id="catsList"></ul>
-    </div>
-    <br>
-    <div>
-        <strong>Gato Selecionado:</strong>
-        <br>
-        <div>
-            Nome: <spam id="cat-nome"></spam>
-            <br>
-            Cliques: <spam id="cat-cliques"></spam>
-            <br>
-            Foto:
-            <br>
-            <img id="cat-foto">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <section id="availableCats">
+                    <div>
+                        <strong>Cats:</strong>
+                        <ul id="catsList"></ul>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <section id="selectedCat">
+            <div class="row">
+                <div class="col">
+                    <strong>Selected Cat:</strong>
+                    <br>
+                    <div>
+                        <label>Name:</label>
+                        <spam id="cat-name"></spam>
+                        <br>
+                        <label>Clicks:</label>
+                        <spam id="cat-cliques"></spam>
+                        <br>
+                        <label class="foto">
+                            Photo:
+                        </label>
+                        <img id="cat-foto" height="120px" width="240px">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col ">
+                    <button id="editarLink" class="btn btn btn-primary">Admin</button>
+                </div>
+            </div>
+        </section>
+        <div class="row">
+            <div class="col">
+                <section id="adminArea" style="visibility: hidden;">
+                    <form id="form">
+                        <div class="row">
+                            <div class="col">
+                                <strong>Selected Cat Edition:</strong>
+                                <br>
+                                <label>Name: </label>
+                                <input id="adminArea_nome" type="text">
+                                <br>
+                                <label>Clicks: </label>
+                                <input id="adminArea_cliques" type="number">
+                                <br>
+                                <label>Photo URL: </label>
+                                <input id="adminArea_url" type="text">
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button id="ocultarButton" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
     </div>
-    <hr>
 
 
-    <script src="https://code.jquery.com/jquery-3.4.0.min.js"
-        integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <script src="js/lib.js"> </script>
 </body>
 

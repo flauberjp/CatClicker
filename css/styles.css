@@ -1,0 +1,9 @@
+.foto {
+    vertical-align: top;
+}
+
+label {
+    display: inline-block;
+    width: 140px;
+    text-align: right;
+}​
